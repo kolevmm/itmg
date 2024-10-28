@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, flash
-from flask_login import UserMixin
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
@@ -10,6 +10,18 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Генерирайте случаен ключ с дължина 24 байта
+# Инциализирайте LoginManager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'  # Задайте маршрута за вход
+
+# Функция за зареждане на потребителя, базирана на ID
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))  # Заменете 'User' с вашия модел на потребителя
+
+# Задайте маршрута за логин
+login_manager.login_view = 'login'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///services.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -68,7 +80,37 @@ def create_tables():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if current_user.is_authenticated:  # Проверка дали потребителят е аутентифициран
+        return redirect(url_for('dashboard'))  # Пренасочете към главния панел
+    return render_template('login.html')  # В противен случай покажете логин страницата
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+
+        # Проверка на потребителското име и паролата
+        if user and check_password_hash(user.password, password):
+            login_user(user)  # Вход на потребителя
+            flash('Влязохте успешно!', 'success')
+            return redirect(url_for('dashboard'))  # Пренасочете към основната страница или контролния панел
+        else:
+            flash('Невалидно име на потребител или парола.', 'danger')
+
+    return render_template('login.html')  # Връщане на шаблона за логин
+
+@app.route('/logout')
+def logout():
+    logout_user()  # Изход на потребителя
+    flash('Изходят успешно!', 'success')
+    return redirect(url_for('index'))
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html')  # Страница след влизане
 
 @app.route('/add_service', methods=['GET', 'POST'])
 def add_service():

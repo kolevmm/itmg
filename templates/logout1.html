@@ -1,0 +1,17 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+    <header class="bg-info text-white text-center py-4">
+        <h1>Добре дошли в нашето IT приложение!</h1>
+    </header>
+    
+    <!-- Включване на навигационния бар -->
+    {% include 'navbar.html' %}
+    
+    <!-- logout.html -->
+<main class="container text-center my-5">
+    <h2>Успешно изход</h2>
+    <p>Вие успешно излязохте от системата. Благодарим ви, че използвахте нашето приложение!</p>
+    <a href="{{ url_for('login') }}" class="btn btn-primary">Вход</a>
+</main>
+<!-- Включване на footer -->
+{% include 'footer.html' %}
