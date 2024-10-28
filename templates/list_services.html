@@ -1,0 +1,38 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+    <header class="bg-info text-white text-center py-4">
+        <h1>Налични услуги</h1>
+    </header>
+     <!-- Включване на навигационния бар -->
+     {% include 'navbar.html' %}
+    <main class="container my-5">
+        <h2 class="text-center">Списък с услуги</h2>
+        {% if services %}
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Име</th>
+                    <th>Описание</th>
+                    <th>Цена</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service in services %}
+                <tr>
+                    <td>{{ service.id }}</td>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.price }} BGN</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-warning" role="alert">
+            Няма налични услуги.
+        </div>
+        {% endif %}
+    </main>
+<!-- Включване на footer -->
+{% include 'footer.html' %}

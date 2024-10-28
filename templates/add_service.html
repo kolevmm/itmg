@@ -1,0 +1,26 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+    <header class="bg-info text-white text-center py-4">
+        <h1>Добавяне на нова услуга</h1>
+    </header>
+     <!-- Включване на навигационния бар -->
+     {% include 'navbar.html' %}
+    <main class="container my-5">
+        <form action="/add_service" method="POST" class="bg-light p-4 border rounded">
+            <div class="form-group">
+                <label for="name">Име на услугата:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="price">Цена:</label>
+                <input type="number" id="price" name="price" class="form-control" required step="0.01">
+            </div>
+            <button type="submit" class="btn btn-warning btn-block">Добави услуга</button>
+        </form>
+    </main>
+<!-- Включване на footer -->
+{% include 'footer.html' %}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчет за посещения</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>Отчет за посещения</h1>
+    </header>
+    
+    {% include 'navbar.html' %}
+    
+    <main class="container my-5">
+        <h2 class="text-center">Отчет за клиент</h2>
+        <p class="text-center">От {{ start_date }} до {{ end_date }}</p>
+        
+        {% if visits %}
+        <table class="table table-striped">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Име на клиента</th>
+                    <th>Услуга</th>
+                    <th>Продължителност (ч)</th>
+                    <th>Дата на посещението</th>
+                    <th>Такса</th>
+                    <th>Бележки</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for visit in visits %}
+                <tr>
+                    <td>{{ visit.id }}</td>
+                    <td>{{ visit.client.name }}</td>
+                    <td>{{ visit.service.name }}</td>
+                    <td>{{ visit.duration }}</td>
+                    <td>{{ visit.visit_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        {% if visit.service.price is not none and visit.duration is not none %}
+                            {% set visit_total = (visit.duration * visit.service.price) | round(2) %}
+                            {{ visit_total }} лв
+                        {% else %}
+                            Няма стойност
+                        {% endif %}
+                    </td>
+                    <td>{{ visit.notes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <h4 class="text-center">Обща сума: {{ total_amount | round(2) }} лв.</h4> <!-- Общата сума -->
+        
+        {% else %}
+        <div class="alert alert-warning" role="alert">
+            Няма налични посещения за този клиент.
+        </div>
+        {% endif %}
+    </main>
+<!-- Включване на footer -->
+{% include 'footer.html' %}

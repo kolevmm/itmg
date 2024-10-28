@@ -1,0 +1,108 @@
+/* Основни стилове */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9; /* Светъл фон */
+}
+
+/* Заглавие */
+header {
+    background: #4A90E2; /* По-наситен син фон */
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Сянка под заглавието */
+}
+
+/* Навигационна лента */
+nav {
+    margin: 20px 0;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex; /* Гъвкава навигация */
+    justify-content: center;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav a {
+    color: #ffffff; /* Бели букви */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 16px;
+    transition: color 0.3s; /* Плавен преход за цвета на линковете */
+}
+
+nav a:hover {
+    color: #FFD700; /* Златист цвят при задържане */
+}
+
+/* Основно съдържание */
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Таблица */
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px 20px;
+    border: 1px solid #ddd; /* Лека граница */
+}
+
+table th {
+    background: #4A90E2; /* Син фон за заглавия на таблицата */
+    color: white;
+    text-transform: uppercase; /* Долна регистрирана за заглавията */
+}
+
+table tbody tr:nth-child(even) {
+    background: #f1f1f1; /* Светлосив фон за четни редове */
+}
+
+table tbody tr:hover {
+    background: #e2e2e2; /* Фон при задържане на реда */
+}
+
+/* Футър */
+footer {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px 0;
+    background: #333;
+    color: #ffffff;
+}
+
+/* Формуляри */
+form {
+    display: flex;
+    flex-direction: column; /* Вертикално подреждане на елементите */
+    margin: 20px auto;
+    width: 80%;
+    max-width: 500px; /* Ограничаване на ширината на формуляра */
+}
+
+form input, form textarea {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px; /* Закръглени ръбове */
+    transition: border-color 0.3s; /* Плавен преход за рамката */
+}
+
+form input:focus, form textarea:focus {
+    border-color: #4A90E2; /* Синя рамка при фокус */
+}

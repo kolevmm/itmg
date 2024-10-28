@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактиране на посещение</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header class="bg-primary text-white text-center py-4">
+        <h1>Редактиране на посещение</h1>
+    </header>
+
+    <!-- Включване на навигационния бар -->
+    {% include 'navbar.html' %}
+    
+    <main class="container my-5">
+        <form action="/edit_visit/{{ visit.id }}" method="POST" class="bg-light p-4 border rounded">
+            <div class="form-group">
+                <label for="client_name">Име на клиента:</label>
+                <input type="text" id="client_name" name="client_name" class="form-control" value="{{ visit.client.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="service_id">Изберете услуга:</label>
+                <select id="service_id" name="service_id" class="form-control" required>
+                    {% for service in services %}
+                    <option value="{{ service.id }}" {% if service.id == visit.service_id %}selected{% endif %}>{{ service.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="duration">Продължителност (в часове):</label>
+                <input type="number" id="duration" name="duration" class="form-control" value="{{ visit.duration }}" required step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="visit_date">Дата на посещението:</label>
+                <input type="date" id="visit_date" name="visit_date" class="form-control" value="{{ visit.visit_date.strftime('%Y-%m-%d') }}" required>
+            </div>
+            <div class="form-group">
+                <label for="notes">Бележки:</label>
+                <textarea id="notes" name="notes" class="form-control" rows="3">{{ visit.notes }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Запази промените</button>
+        </form>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>© 2024 Вашето IT приложение.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

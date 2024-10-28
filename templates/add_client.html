@@ -1,0 +1,26 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+    <header class="bg-info text-white text-center py-4">
+        <h1>Добавяне на нов клиент</h1>
+    </header>
+     <!-- Включване на навигационния бар -->
+     {% include 'navbar.html' %}
+    <main class="container my-5">
+        <form action="/add_client" method="POST" class="bg-light p-4 border rounded">
+            <div class="form-group">
+                <label for="name">Име на клиента:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Имейл:</label>
+                <input type="email" id="email" name="email" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="phone">Телефон:</label>
+                <input type="text" id="phone" name="phone" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-warning btn-block">Добави клиент</button>
+        </form>
+    </main>
+<!-- Включване на footer -->
+{% include 'footer.html' %}

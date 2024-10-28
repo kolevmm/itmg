@@ -1,0 +1,40 @@
+{% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="alert-container">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+<!-- Включване на header -->
+{% include 'header.html' %}
+    <header class="bg-info text-white text-center py-4">
+        <h1>Добавяне на нова услуга</h1>
+    </header>
+     <!-- Включване на навигационния бар -->
+     {% include 'navbar.html' %}
+    <main class="container my-5">
+        <form action="/create_user" method="POST">
+            <div class="form-group">
+                <label for="username">Потребителско име:</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Парола:</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Роля:</label>
+                <select id="role" name="role" class="form-control" required>
+                    <option value="user">Потребител</option>
+                    <option value="manager">Управител</option>
+                    <option value="admin">Администратор</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Създай потребител</button>
+        </form>
+        
+    </main>
+<!-- Включване на footer -->
+{% include 'footer.html' %}
