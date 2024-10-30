@@ -1,11 +1,15 @@
-<footer class="bg-dark text-white text-center py-3">
-    <p>© 2024 Вашето IT приложение.</p>
+<footer class="bg-dark text-white text-center py-3" style="opacity: 0.9; border-top: 1px solid #444;">
+    <p>© 2024 Вашето IT приложение. Следвайте ни:
+        <a href="https://facebook.com" class="text-white ml-2"><i class="fab fa-facebook"></i></a>
+        <a href="https://twitter.com" class="text-white ml-2"><i class="fab fa-twitter"></i></a>
+    </p>
 </footer>
+
 <script>
     function filterTable() {
         const filter = document.getElementById('filter').value.toUpperCase();
         const table = document.querySelector('.table');
-        const trs = table.querySelectorAll('tbody tr'); // Вземяме всички редове от тялото на таблицата
+        const trs = table.querySelectorAll('tbody tr'); // Вземаме всички редове от тялото на таблицата
     
         trs.forEach(tr => {
             const clientName = tr.querySelector('td:nth-child(2)').textContent.toUpperCase(); // Име на клиента
@@ -19,7 +23,8 @@
             }
         });
     }
-    </script>
+</script>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

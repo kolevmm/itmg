@@ -1,0 +1,59 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+<header class="bg-info text-white text-center py-4">
+    <h1>История на обслужването: {{ client.name }}</h1>
+</header>
+<!-- Включване на навигационния бар -->
+{% include 'navbar.html' %}
+
+<main class="container my-5">
+    <!-- Детайли за клиента -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4>Детайли за клиента</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Име:</strong> {{ client.name }}</p>
+            <p><strong>Имейл:</strong> {{ client.email }}</p>
+            <p><strong>Телефон:</strong> {{ client.phone }}</p>
+            <p><strong>Адрес:</strong> {{ client.address }}</p>
+        </div>
+    </div>
+
+    <!-- История на посещенията -->
+    <h3 class="text-center mb-4">История на посещенията</h3>
+    
+    {% if visits %}
+    <table class="table table-striped">
+        <thead class="thead-light">
+            <tr>
+                <th>Дата</th>
+                <th>Услуга</th>
+                <th>Продължителност</th>
+                <th>Такса</th>
+                <th>Служител</th>
+                <th>Бележки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visit in visits %}
+            <tr>
+                <td>{{ visit.visit_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ visit.service.name }}</td>
+                <td>{{ visit.duration }} часа</td>
+                <td>{{ (visit.duration * visit.service.price) | round(2) }} BGN</td>
+                <td>{{ visit.employee.name }}</td>
+                <td>{{ visit.notes }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-warning text-center" role="alert">
+        Няма записани посещения за този клиент.
+    </div>
+    {% endif %}
+</main>
+
+<!-- Включване на footer -->
+{% include 'footer.html' %}

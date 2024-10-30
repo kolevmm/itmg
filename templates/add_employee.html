@@ -1,11 +1,13 @@
 <!-- Включване на header -->
 {% include 'header.html' %}
-    <header class="bg-info text-white text-center py-4">
-        <h1>Добавяне на нов клиент</h1>
-    </header>
-     <!-- Включване на навигационния бар -->
-     {% include 'navbar.html' %}
-    <main class="container my-5">
+<header class="bg-info text-white text-center py-4">
+    <h1>Добавяне на нов служител</h1>
+</header>
+<!-- Включване на навигационния бар -->
+{% include 'navbar.html' %}
+
+<main class="container my-5">
+    <div class="col-md-8 offset-md-2">  <!-- Центриране на формата -->
         <form action="/add_employee" method="POST">
             <div class="form-group">
                 <label for="name">Име на служител:</label>
@@ -19,8 +21,15 @@
                     {% endfor %}
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Добави служител</button>
+            <button type="submit" class="btn btn-primary btn-block">Добави нов служител</button>
         </form>
-    </main>
+        
+        <!-- Бутон за връщане към списъка с клиенти -->
+        <div class="text-center mt-3">
+            <a href="{{ url_for('list_clients') }}" class="btn btn-secondary">Назад към списъка с клиенти</a>
+        </div>
+    </div>
+</main>
+
 <!-- Включване на footer -->
 {% include 'footer.html' %}

@@ -5,16 +5,30 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
+from functools import wraps
 import random
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Зарежда променливите от .env файла
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)  # Генерирайте случаен ключ с дължина 24 байта
-# Инциализирайте LoginManager
+app.secret_key = os.getenv("SECRET_KEY")  # Използва статичния ключ от .env файла
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'  # Задайте маршрута за вход
 
+
+def role_required(role):
+    def wrapper(fn):
+        @wraps(fn)
+        def decorated_view(*args, **kwargs):
+            if not current_user.is_authenticated or current_user.role != role:
+                flash('Нямате права за достъп до тази страница!', 'danger')
+                return redirect(url_for('dashboard'))  # Пренасочване до главната страница или панел
+            return fn(*args, **kwargs)
+        return decorated_view
+    return wrapper
 # Функция за зареждане на потребителя, базирана на ID
 @login_manager.user_loader
 def load_user(user_id):
@@ -113,6 +127,7 @@ def dashboard():
     return render_template('dashboard.html')  # Страница след влизане
 
 @app.route('/add_service', methods=['GET', 'POST'])
+@role_required('admin')  # Само администратори имат достъп
 def add_service():
     if request.method == 'POST':
         name = request.form['name']
@@ -140,6 +155,7 @@ def add_employee():
         new_employee = Employee(name=name, client_id=client_id)
         db.session.add(new_employee)
         db.session.commit()
+        flash('Служителят беше добавен успешно!', 'success')
         return redirect(url_for('add_employee'))
 
     clients = Client.query.all()  # Вземане на всички клиенти за падащото меню
@@ -270,6 +286,7 @@ def delete_visit(visit_id):
     return redirect(url_for('list_visits'))  # Пренасочване към списъка с посещения
 
 @app.route('/create_user', methods=['GET', 'POST'])
+@role_required('user')
 def create_user():
     if request.method == 'POST':
         username = request.form['username']
@@ -335,6 +352,16 @@ def view_report():
     clients = Client.query.all()
     return render_template('generate_report.html', clients=clients)
 
+@app.route('/client/<int:client_id>/history', methods=['GET'])
+@login_required  # Изисква влизане
+def client_history(client_id):
+    # Зареждане на данни за конкретния клиент
+    client = Client.query.get_or_404(client_id)
+    
+    # Зареждане на всички посещения, свързани с този клиент
+    visits = Visit.query.filter_by(client_id=client_id).order_by(Visit.visit_date.desc()).all()
+    
+    return render_template('client_history.html', client=client, visits=visits)
 
 @app.route('/generate_pdf_report', methods=['GET', 'POST'])
 def generate_pdf_report():
