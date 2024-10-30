@@ -1,18 +1,24 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
     <div class="container d-flex justify-content-between">
         <a class="navbar-brand text-white" href="#">#itbuddies/</a>
+
+        <!-- Бутон за мобилно меню -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="/">Начало</a>
+                    <a class="nav-link text-white" href="{{ url_for('index') }}">Начало</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="servicesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Услуги
                     </a>
                     <div class="dropdown-menu" aria-labelledby="servicesDropdown">
-                        <a class="dropdown-item" href="/add_service"><i class="fas fa-plus"></i> Добавяне на услуга</a>
-                        <a class="dropdown-item" href="/list_services"><i class="fas fa-list"></i> Преглед на услуги</a>
+                        <a class="dropdown-item" href="{{ url_for('services.add_service') }}"><i class="fas fa-plus"></i> Добавяне на услуга</a>
+                        <a class="dropdown-item" href="{{ url_for('services.list_services') }}"><i class="fas fa-list"></i> Преглед на услуги</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -20,8 +26,8 @@
                         Посещения
                     </a>
                     <div class="dropdown-menu" aria-labelledby="visitsDropdown">
-                        <a class="dropdown-item" href="/add_visit"><i class="fas fa-plus"></i> Добавяне на посещение</a>
-                        <a class="dropdown-item" href="/list_visits"><i class="fas fa-list"></i> Преглед на посещения</a>
+                        <a class="dropdown-item" href="{{ url_for('visits.add_visit') }}"><i class="fas fa-plus"></i> Добавяне на посещение</a>
+                        <a class="dropdown-item" href="{{ url_for('visits.list_visits') }}"><i class="fas fa-list"></i> Преглед на посещения</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -29,9 +35,9 @@
                         Клиенти
                     </a>
                     <div class="dropdown-menu" aria-labelledby="clientsDropdown">
-                        <a class="dropdown-item" href="/add_client"><i class="fas fa-plus"></i> Добавяне на клиент</a>
-                        <a class="dropdown-item" href="/list_clients"><i class="fas fa-list"></i> Преглед на клиенти</a>
-                        <a class="dropdown-item" href="/add_employee"><i class="fas fa-user-plus"></i> Добавяне на служител</a>
+                        <a class="dropdown-item" href="{{ url_for('clients.add_client') }}"><i class="fas fa-plus"></i> Добавяне на клиент</a>
+                        <a class="dropdown-item" href="{{ url_for('clients.list_clients') }}"><i class="fas fa-list"></i> Преглед на клиенти</a>
+                        <a class="dropdown-item" href="{{ url_for('employees.add_employee') }}"><i class="fas fa-user-plus"></i> Добавяне на служител</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -39,8 +45,8 @@
                         Отчети
                     </a>
                     <div class="dropdown-menu" aria-labelledby="reportsDropdown">
-                        <a class="dropdown-item" href="/generate_report"><i class="fas fa-file-pdf"></i> Генериране на отчети</a>
-                        <a class="dropdown-item" href="/list_clients"><i class="fas fa-list"></i> Преглед на клиенти</a>
+                        <a class="dropdown-item" href="{{ url_for('reports.generate_report') }}"><i class="fas fa-file-pdf"></i> Генериране на отчети</a>
+                        <a class="dropdown-item" href="{{ url_for('clients.list_clients') }}"><i class="fas fa-list"></i> Преглед на клиенти</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
@@ -48,7 +54,7 @@
                         Системни
                     </a>
                     <div class="dropdown-menu" aria-labelledby="systemDropdown">
-                        <a class="dropdown-item" href="/create_user"><i class="fas fa-user-cog"></i> Добави потребител</a>
+                        <a class="dropdown-item" href="{{ url_for('users.create_user') }}"><i class="fas fa-user-cog"></i> Добави потребител</a>
                     </div>
                 </li>
             </ul>
@@ -56,7 +62,7 @@
         <span class="navbar-text text-white">
             {% if current_user.is_authenticated %}
                 {{ current_user.username }}
-                <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm ml-2">Изход</a>
+                <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary btn-sm ml-2">Изход</a>
             {% endif %}
         </span>
     </div>

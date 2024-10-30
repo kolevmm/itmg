@@ -33,8 +33,22 @@
     {% if messages %}
         <div class="alert-container">
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
+                <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
             {% endfor %}
         </div>
     {% endif %}
-    {% endwith %}
+{% endwith %}
+
+<script>
+    // Автоматично скриване на съобщенията след 5 секунди (5000 милисекунди)
+    setTimeout(function() {
+        const alertContainer = document.querySelector('.alert-container');
+        if (alertContainer) {
+            alertContainer.style.transition = 'opacity 0.5s ease';
+            alertContainer.style.opacity = '0';
+            setTimeout(function() {
+                alertContainer.remove();
+            }, 500); // Допълнителни 0.5 секунди за плавното изчезване
+        }
+    }, 5000); // Променете стойността, ако искате по-дълго или по-кратко изчакване
+</script>
