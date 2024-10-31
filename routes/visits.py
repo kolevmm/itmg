@@ -76,7 +76,8 @@ def edit_visit(visit_id):
         return redirect(url_for('visits.list_visits'))
 
     services = Service.query.all()
-    return render_template('edit_visit.html', visit=visit, services=services)
+    clients = Client.query.all()  # Добавяне на клиенти
+    return render_template('edit_visit.html', visit=visit, services=services, clients=clients)
 
 @visits_bp.route('/delete/<int:visit_id>', methods=['POST'])
 @login_required

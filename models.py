@@ -51,3 +51,52 @@ class Visit(db.Model):
     
     employee = db.relationship('Employee', backref='visits')  # Релация
     service = db.relationship('Service', backref='visits')  # Връзка към Service
+
+class Product(db.Model):
+    __tablename__ = 'products'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=0)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
+
+    def __repr__(self):
+        return f'<Product {self.name} - {self.price} BGN>'
+
+
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+# Модел Settings - за глобални параметри
+class Settings(db.Model):
+    __tablename__ = 'settings'
+    id = db.Column(db.Integer, primary_key=True)
+    parameter = db.Column(db.String(100), unique=True, nullable=False)
+    value = db.Column(db.String(200), nullable=False)
+
+# Модел CompanyInfo - за информацията за фирмата
+class CompanyInfo(db.Model):
+    __tablename__ = 'company_info'
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(200), nullable=False)
+    tax_number = db.Column(db.String(50), nullable=False)
+    address = db.Column(db.String(200), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
+    email = db.Column(db.String(100), nullable=True)
+
+    # Свързване на CompanyInfo с BankAccount - една фирма може да има много банкови сметки
+    bank_accounts = db.relationship('BankAccount', backref='company', lazy=True)
+
+# Модел BankAccount - за банковите сметки
+class BankAccount(db.Model):
+    __tablename__ = 'bank_account'
+    id = db.Column(db.Integer, primary_key=True)
+    account_name = db.Column(db.String(100), nullable=False)
+    account_number = db.Column(db.String(50), nullable=False)
+    iban = db.Column(db.String(34), nullable=False)
+    bic = db.Column(db.String(11), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company_info.id'), nullable=False)

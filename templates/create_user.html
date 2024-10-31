@@ -4,7 +4,7 @@
      <!-- Включване на навигационния бар -->
      {% include 'navbar.html' %}
     <main class="container my-5">
-        <form action="/create_user" method="POST">
+        <form action="{{ url_for('users.create_user') }}" method="POST">
             <div class="form-group">
                 <label for="username">Потребителско име:</label>
                 <input type="text" id="username" name="username" class="form-control" required>

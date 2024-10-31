@@ -5,7 +5,7 @@
      {% include 'navbar.html' %}
     <main class="container my-5">
         <h2>Генериране на PDF отчет</h2>
-        <form action="/generate_pdf_report" method="POST" class="bg-light p-4 border rounded mb-4">
+        <form action="{{ url_for('reports.generate_pdf_report') }}" method="POST" class="bg-light p-4 border rounded mb-4">
             <div class="form-group">
                 <label for="client_id_pdf">Изберете клиент:</label>
                 <select id="client_id_pdf" name="client_id" class="form-control" required>
@@ -26,7 +26,7 @@
         </form>
 
         <h2 class="mt-5">Преглед на отчет</h2>
-        <form action="/view_report" method="POST" class="bg-light p-4 border rounded">
+        <form action="{{ url_for('reports.view_report') }}" method="POST" class="bg-light p-4 border rounded">
             <div class="form-group">
                 <label for="client_id_view">Изберете клиент:</label>
                 <select id="client_id_view" name="client_id" class="form-control" required>

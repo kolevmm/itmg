@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+<nav class="navbar navbar-expand-lg navbar-light bg-custom">
     <div class="container d-flex justify-content-between">
         <a class="navbar-brand text-white" href="#">#itbuddies/</a>
 
@@ -41,20 +41,22 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="reportsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Отчети
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="productsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Продукти
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="reportsDropdown">
-                        <a class="dropdown-item" href="{{ url_for('reports.generate_report') }}"><i class="fas fa-file-pdf"></i> Генериране на отчети</a>
-                        <a class="dropdown-item" href="{{ url_for('clients.list_clients') }}"><i class="fas fa-list"></i> Преглед на клиенти</a>
+                    <div class="dropdown-menu" aria-labelledby="productsDropdown">
+                        <a class="dropdown-item" href="{{ url_for('products.add_product') }}"><i class="fas fa-plus"></i> Добавяне на продукт</a>
+                        <a class="dropdown-item" href="{{ url_for('products.list_products') }}"><i class="fas fa-list"></i> Преглед на продукти</a>
                     </div>
                 </li>
+                
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white" href="#" id="systemDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Системни
                     </a>
                     <div class="dropdown-menu" aria-labelledby="systemDropdown">
                         <a class="dropdown-item" href="{{ url_for('users.create_user') }}"><i class="fas fa-user-cog"></i> Добави потребител</a>
+                        <a class="dropdown-item" href="{{ url_for('reports.generate_report') }}"><i class="fas fa-file-pdf"></i> Генериране на отчети</a>
                     </div>
                 </li>
             </ul>

@@ -32,6 +32,7 @@ from routes.users import users_bp
 from routes.employees import employees_bp
 from routes.reports import reports_bp
 from routes.auth import auth_bp
+from routes.products import products_bp
 
 app.register_blueprint(clients_bp)
 app.register_blueprint(services_bp)
@@ -40,6 +41,7 @@ app.register_blueprint(users_bp)
 app.register_blueprint(employees_bp)
 app.register_blueprint(reports_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(products_bp)
 
 @app.before_first_request
 def create_tables():

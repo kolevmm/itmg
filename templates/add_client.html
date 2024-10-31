@@ -4,7 +4,7 @@
      <!-- Включване на навигационния бар -->
      {% include 'navbar.html' %}
     <main class="container my-5">
-        <form action="/add_client" method="POST" class="bg-light p-4 border rounded">
+        <form action="{{ url_for('clients.add_client') }}" method="POST" class="bg-light p-4 border rounded">
             <div class="form-group">
                 <label for="name">Име на клиента:</label>
                 <input type="text" id="name" name="name" class="form-control" required>

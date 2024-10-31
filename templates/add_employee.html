@@ -8,7 +8,7 @@
 
 <main class="container my-5">
     <div class="col-md-8 offset-md-2">  <!-- Центриране на формата -->
-        <form action="/add_employee" method="POST">
+        <form action="{{ url_for('employees.add_employee') }}" method="POST">
             <div class="form-group">
                 <label for="name">Име на служител:</label>
                 <input type="text" id="name" name="name" class="form-control" required>
@@ -26,7 +26,7 @@
         
         <!-- Бутон за връщане към списъка с клиенти -->
         <div class="text-center mt-3">
-            <a href="{{ url_for('list_clients') }}" class="btn btn-secondary">Назад към списъка с клиенти</a>
+            <a href="{{ url_for('clients.list_clients') }}" class="btn btn-secondary">Назад към списъка с клиенти</a>
         </div>
     </div>
 </main>

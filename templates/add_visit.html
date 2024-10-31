@@ -4,7 +4,7 @@
      <!-- Включване на навигационния бар -->
     {% include 'navbar.html' %}
     <main class="container my-5">
-        <form action="/add_visit" method="POST" class="bg-light p-4 border rounded">
+        <form action="{{ url_for('visits.add_visit') }}" method="POST" class="bg-light p-4 border rounded">
             <div class="form-group">
                 <label for="client_id">Изберете клиент:</label>
                 <select id="client_id" name="client_id" class="form-control" required onchange="updateEmployees()">

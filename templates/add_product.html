@@ -1,0 +1,27 @@
+{% include 'header.html' %}
+{% include 'navbar.html' %}
+
+<main class="container my-5">
+    <h2 class="text-center">Добавяне на нов продукт</h2>
+    <form action="{{ url_for('products.add_product') }}" method="POST" class="bg-light p-4 border rounded">
+        <div class="form-group">
+            <label for="name">Име на продукта:</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Описание:</label>
+            <textarea id="description" name="description" class="form-control" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="quantity">Количество:</label>
+            <input type="number" id="quantity" name="quantity" class="form-control" required min="0">
+        </div>
+        <div class="form-group">
+            <label for="price">Цена:</label>
+            <input type="number" id="price" name="price" class="form-control" required step="0.01">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Добави продукт</button>
+    </form>
+</main>
+
+{% include 'footer.html' %}

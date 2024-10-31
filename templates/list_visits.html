@@ -1,17 +1,17 @@
-<!-- Включване на header -->
+<!-- Include header -->
 {% include 'header.html' %}
 
-<!-- Включване на навигационния бар -->
+<!-- Include navbar -->
 {% include 'navbar.html' %}
+
 <main class="container my-5">
     <h2 class="text-center">Списък на посещенията</h2>
-    
+
     <div class="text-right mb-3">
-        <a href="{{ url_for('add_visit') }}" class="btn btn-primary">Добави ново посещение</a>
+        <a href="{{ url_for('visits.add_visit') }}" class="btn btn-primary">Добави ново посещение</a>
     </div>
-    
+
     <div class="mb-4">
-        <label for="filter" class="form-label">Филтрирайте посещенията</label>
         <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-search"></i></span>
@@ -21,75 +21,97 @@
     </div>
 
     {% if visits %}
-    <table class="table table-bordered">
-        <thead class="thead-light">
-            <tr>
-                <th class="text-center">ID</th>
-                <th>Име на клиента</th>
-                <th>Заявил</th>
-                <th>Услуга</th>
-                <th class="text-center">Време</th>
-                <th class="text-center">Дата</th>
-                <th class="text-center">Такса</th>
-                <th>Бележки</th>
-                <th class="text-center">Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for visit in visits %}
-            <tr>
-                <td class="text-center">{{ visit.id }}</td>
-                <td>{{ visit.client.name }}</td>
-                <td>{{ visit.employee.name }}</td>
-                <td>{{ visit.service.name }}</td>
-                <td class="text-center">{{ visit.duration }}</td>
-                <td class="text-center">{{ visit.visit_date.strftime('%Y-%m-%d') }}</td>
-                <td class="text-center">{{ (visit.duration * visit.service.price) | round(2) }}</td>
-                <td>{{ visit.notes }}</td>
-                <td class="text-center">
-                    {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('edit_visit', visit_id=visit.id) }}" class="btn btn-warning btn-sm" title="Редактирай">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    {% if current_user.role == 'user' %}
-                    <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ visit.id }}" title="Изтрий">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>
-                    {% endif %}
-                    {% endif %}
-                </td>
-            </tr>
+    <div class="accordion" id="visitAccordion">
+        {% for visit in visits %}
+        <div class="card">
+            <div class="card-header" id="heading{{ visit.id }}">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ visit.id }}" aria-expanded="false" aria-controls="collapse{{ visit.id }}">
+                        <span class="service-date">{{ visit.visit_date.strftime('%d-%m-%Y') }}</span> | <span class="client-name">{{ visit.client.name }}</span> | <span class="service-name">{{ visit.service.name }}</span>
+                    </button>
+                </h2>
+            </div>
 
-            <!-- Модален прозорец за потвърждение на изтриване -->
-            <div class="modal fade" id="deleteModal{{ visit.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel">Потвърдете изтриването</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+            <div id="collapse{{ visit.id }}" class="collapse" aria-labelledby="heading{{ visit.id }}" data-parent="#visitAccordion">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Заявил:</strong> {{ visit.employee.name }}</p>
+                            <p><strong>Продължителност:</strong> {{ visit.duration }} часа</p>
                         </div>
-                        <div class="modal-body">
-                            Наистина ли искате да изтриете това посещение?
+                        <div class="col-md-6">
+                            {% if current_user.role == 'user' %}
+                            <p><strong>Такса:</strong> {{ (visit.duration * visit.service.price) | round(2) }} BGN</p>
+                            {% endif %}
+                            <p><strong>Бележки:</strong> {{ visit.notes }}</p>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказ</button>
-                            <form action="{{ url_for('delete_visit', visit_id=visit.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger">Изтрий</button>
-                            </form>
-                        </div>
+                    </div>
+                    <div class="text-right">
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('visits.edit_visit', visit_id=visit.id) }}" class="btn btn-warning btn-sm" title="Редактирай">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {% if current_user.role == 'user' %}
+                        <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ visit.id }}" title="Изтрий">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                        {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
-            {% endfor %}
-        </tbody>
-    </table>
+        </div>
+
+        <!-- Delete confirmation modal -->
+        <div class="modal fade" id="deleteModal{{ visit.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ visit.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel{{ visit.id }}">Потвърдете изтриването</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Наистина ли искате да изтриете това посещение?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказ</button>
+                        <form action="{{ url_for('visits.delete_visit', visit_id=visit.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">Изтрий</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     {% else %}
     <div class="alert alert-warning text-center" role="alert">
         Няма налични посещения.
     </div>
     {% endif %}
 </main>
-<!-- Включване на footer -->
+<script>
+    function filterVisits() {
+        const input = document.getElementById('filter');
+        const filter = input.value.toLowerCase();
+        const cards = document.querySelectorAll('#visitAccordion .card');
+    
+        cards.forEach(card => {
+            const clientName = card.querySelector('.client-name').textContent.toLowerCase();
+            const serviceName = card.querySelector('.service-name').textContent.toLowerCase();
+    
+            if (clientName.includes(filter) || serviceName.includes(filter)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    document.getElementById('filter').addEventListener('keyup', filterVisits);
+    </script>
+    
+<!-- Include footer -->
 {% include 'footer.html' %}

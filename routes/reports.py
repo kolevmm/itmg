@@ -1,6 +1,6 @@
 # routes/reports.py
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, send_file
 from models import Visit, Client
 from datetime import datetime
 from reportlab.lib.pagesizes import letter, landscape

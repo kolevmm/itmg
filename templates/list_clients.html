@@ -6,7 +6,7 @@
 <main class="container my-5">
     <h2 class="text-center">Списък на клиенти</h2>
     <div class="text-right mb-3">
-        <a href="{{ url_for('add_client') }}" class="btn btn-primary">Добави нов клиент</a>
+        <a href="{{ url_for('clients.add_client') }}" class="btn btn-primary">Добави нов клиент</a>
     </div>
     {% if clients %}
     <table class="table table-striped">
@@ -27,7 +27,7 @@
                 <td>{{ client.email }}</td>
                 <td>{{ client.phone }}</td>
                 <td class="text-center">
-                    <a href="{{ url_for('edit_client', client_id=client.id) }}" class="btn btn-warning btn-sm">
+                    <a href="{{ url_for('clients.edit_client', client_id=client.id) }}" class="btn btn-warning btn-sm">
                         <i class="fas fa-edit"></i> Редактирай
                     </a>
                     <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ client.id }}">
@@ -51,7 +51,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Отказ</button>
-                            <form action="{{ url_for('delete_client', client_id=client.id) }}" method="POST" style="display:inline;">
+                            <form action="{{ url_for('clients.delete_client', client_id=client.id) }}" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Изтрий</button>
                             </form>
                         </div>
