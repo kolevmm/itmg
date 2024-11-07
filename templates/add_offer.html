@@ -1,0 +1,145 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+
+<!-- Включване на навигационния бар -->
+{% include 'navbar.html' %}
+<main class="container my-5">
+    <h2 class="text-center">Добавяне на нова оферта</h2>
+
+    <form action="{{ url_for('offers.add_offer') }}" method="POST" class="bg-light p-4 border rounded">
+        <!-- Избор на клиент -->
+        <div class="form-group">
+            <label for="client_id">Клиент:</label>
+            <select id="client_id" name="client_id" class="form-control" required>
+                {% for client in clients %}
+                <option value="{{ client.id }}">{{ client.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Статус на офертата -->
+        <div class="form-group">
+            <label for="status">Статус:</label>
+            <select id="status" name="status" class="form-control" required>
+                <option value="draft">Чернова</option>
+                <option value="sent">Изпратена</option>
+                <option value="accepted">Приета</option>
+                <option value="rejected">Отхвърлена</option>
+            </select>
+        </div>
+
+        <!-- Секция за продукти -->
+        <h4>Продукти</h4>
+        <div id="product-section">
+            <div class="product-entry">
+                <div class="form-row align-items-end">
+                    <div class="col-md-6">
+                        <label>Продукт</label>
+                        <select name="products[]" class="form-control product-select" onchange="calculateTotal()">
+                            <option value="" data-price="0">Изберете продукт</option>
+                            {% for product in products %}
+                            <option value="{{ product.id }}" data-price="{{ product.price }}">{{ product.name }} - {{ product.price }} BGN</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Количество</label>
+                        <input type="number" name="product_quantities[]" class="form-control product-quantity" min="1" value="1" onchange="calculateTotal()">
+                    </div>
+                    <div class="col-md-3">
+                        <label>Цена</label>
+                        <input type="number" name="product_prices[]" class="form-control product-price" step="0.01" placeholder="Цена" readonly>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary mt-2" onclick="addProductEntry()">Добави още продукт</button>
+        </div>
+
+        <!-- Секция за услуги -->
+        <h4 class="mt-4">Услуги</h4>
+        <div id="service-section">
+            <div class="service-entry">
+                <div class="form-row align-items-end">
+                    <div class="col-md-6">
+                        <label>Услуга</label>
+                        <select name="services[]" class="form-control service-select" onchange="calculateTotal()">
+                            <option value="" data-price="0">Изберете услуга</option>
+                            {% for service in services %}
+                            <option value="{{ service.id }}" data-price="{{ service.price }}">{{ service.name }} - {{ service.price }} BGN</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Часове</label>
+                        <input type="number" name="service_hours[]" class="form-control service-hours" min="1" value="1" onchange="calculateTotal()">
+                    </div>
+                    <div class="col-md-3">
+                        <label>Цена на час</label>
+                        <input type="number" name="service_rates[]" class="form-control service-rate" step="0.01" placeholder="Цена на час" readonly>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary mt-2" onclick="addServiceEntry()">Добави още услуга</button>
+        </div>
+
+        <!-- Общо -->
+        <h4 class="mt-4">Общо: <span id="total-price">0</span> BGN</h4>
+
+        <!-- Бутони за запис и отмяна -->
+        <button type="submit" class="btn btn-primary mt-4">Запази офертата</button>
+        <a href="{{ url_for('offers.list_offers') }}" class="btn btn-secondary mt-4">Отказ</a>
+    </form>
+</main>
+
+<script>
+    function calculateTotal() {
+        let total = 0;
+
+        // Calculate total for products
+        document.querySelectorAll('.product-entry').forEach(entry => {
+            const select = entry.querySelector('.product-select');
+            const quantityInput = entry.querySelector('.product-quantity');
+            const priceInput = entry.querySelector('.product-price');
+
+            const price = parseFloat(select.options[select.selectedIndex].dataset.price || 0);
+            const quantity = parseInt(quantityInput.value) || 1;
+            const totalProductPrice = price * quantity;
+
+            priceInput.value = totalProductPrice.toFixed(2);
+            total += totalProductPrice;
+        });
+
+        // Calculate total for services
+        document.querySelectorAll('.service-entry').forEach(entry => {
+            const select = entry.querySelector('.service-select');
+            const hoursInput = entry.querySelector('.service-hours');
+            const rateInput = entry.querySelector('.service-rate');
+
+            const rate = parseFloat(select.options[select.selectedIndex].dataset.price || 0);
+            const hours = parseInt(hoursInput.value) || 1;
+            const totalServicePrice = rate * hours;
+
+            rateInput.value = totalServicePrice.toFixed(2);
+            total += totalServicePrice;
+        });
+
+        document.getElementById('total-price').textContent = total.toFixed(2);
+    }
+
+    function addProductEntry() {
+        const productSection = document.getElementById('product-section');
+        const entry = document.querySelector('.product-entry').cloneNode(true);
+        entry.querySelectorAll('select, input').forEach(el => el.value = '');
+        productSection.appendChild(entry);
+    }
+
+    function addServiceEntry() {
+        const serviceSection = document.getElementById('service-section');
+        const entry = document.querySelector('.service-entry').cloneNode(true);
+        entry.querySelectorAll('select, input').forEach(el => el.value = '');
+        serviceSection.appendChild(entry);
+    }
+</script>
+
+<!-- Включване на footer -->
+{% include 'footer.html' %}

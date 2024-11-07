@@ -1,0 +1,75 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+
+<!-- Включване на навигационния бар -->
+{% include 'navbar.html' %}
+<main class="container my-5">
+    <h2 class="text-center">Настройки</h2>
+
+    <!-- Основна форма за настройки -->
+    <form action="{{ url_for('settings.manage_settings') }}" method="POST" class="bg-light p-4 border rounded">
+        <!-- Настройки за оферти -->
+        <h4>Основни настройки</h4>
+        <div class="form-group">
+            <label for="offer_validity">Валидност на оферти (в дни):</label>
+            <input type="number" id="offer_validity" name="offer_validity" class="form-control" value="{{ settings.offer_validity }}" required>
+        </div>
+        <div class="form-group">
+            <label for="tax_rate">Данъчна ставка (%):</label>
+            <input type="number" id="tax_rate" name="tax_rate" class="form-control" value="{{ settings.tax_rate }}" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label for="payment_terms">Условия за плащане:</label>
+            <textarea id="payment_terms" name="payment_terms" class="form-control" rows="3">{{ settings.payment_terms }}</textarea>
+        </div>
+
+        <!-- Информация за фирмата -->
+        <h4 class="mt-4">Информация за фирмата</h4>
+        <div class="form-group">
+            <label for="company_name">Име на фирмата:</label>
+            <input type="text" id="company_name" name="company_name" class="form-control" value="{{ company_info.company_name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="tax_number">Данъчен номер:</label>
+            <input type="text" id="tax_number" name="tax_number" class="form-control" value="{{ company_info.tax_number }}" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Адрес:</label>
+            <input type="text" id="address" name="address" class="form-control" value="{{ company_info.address }}" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Телефон:</label>
+            <input type="text" id="phone" name="phone" class="form-control" value="{{ company_info.phone }}" required>
+        </div>
+
+        <!-- Записване на промените за основните настройки -->
+        <button type="submit" class="btn btn-success mt-4">Запази настройките</button>
+    </form>
+
+    <!-- Отделна форма за добавяне на нова банкова сметка -->
+    <div class="mt-5">
+        <h4>Банкови сметки</h4>
+        {% for account in bank_accounts %}
+        <div class="form-group">
+            <label for="account_{{ account.id }}">Банкова сметка ({{ account.bank_name }}):</label>
+            <input type="text" id="account_{{ account.id }}" class="form-control" value="{{ account.iban }}" readonly>
+        </div>
+        {% endfor %}
+        
+        <h5 class="mt-4">Добави нова банкова сметка</h5>
+        <form action="{{ url_for('settings.add_bank_account') }}" method="POST" class="bg-light p-4 border rounded">
+            <div class="form-group">
+                <label for="bank_name">Име на банка:</label>
+                <input type="text" id="bank_name" name="bank_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="iban">IBAN:</label>
+                <input type="text" id="iban" name="iban" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Добави банкова сметка</button>
+        </form>
+    </div>
+</main>
+
+<!-- Включване на footer -->
+{% include 'footer.html' %}

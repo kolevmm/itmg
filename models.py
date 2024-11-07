@@ -28,6 +28,9 @@ class Service(db.Model):
 class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    vat = db.Column(db.String(15), nullable=False)
+    address = db.Column(db.String(100), nullable=True)
+    mol = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=True)  # Опционално поле за имейл
     phone = db.Column(db.String(15), nullable=True)  # Опционално поле за телефон
 
@@ -36,7 +39,7 @@ class Client(db.Model):
 class Employee(db.Model):  # Модел за служители
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)  # Свързано с клиента
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=True)  # Свързано с клиента
     client = db.relationship('Client', backref='employees')  # Връзка с клиента
 
 # Модел за посещения
@@ -67,16 +70,13 @@ class Product(db.Model):
         return f'<Product {self.name} - {self.price} BGN>'
 
 
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
-
 # Модел Settings - за глобални параметри
 class Settings(db.Model):
     __tablename__ = 'settings'
     id = db.Column(db.Integer, primary_key=True)
-    parameter = db.Column(db.String(100), unique=True, nullable=False)
-    value = db.Column(db.String(200), nullable=False)
+    offer_validity = db.Column(db.Integer, nullable=False, default=30)
+    tax_rate = db.Column(db.Float, nullable=False, default=20.0)
+    payment_terms = db.Column(db.String(255), nullable=False, default="Стандартни условия")
 
 # Модел CompanyInfo - за информацията за фирмата
 class CompanyInfo(db.Model):
@@ -96,7 +96,39 @@ class BankAccount(db.Model):
     __tablename__ = 'bank_account'
     id = db.Column(db.Integer, primary_key=True)
     account_name = db.Column(db.String(100), nullable=False)
-    account_number = db.Column(db.String(50), nullable=False)
     iban = db.Column(db.String(34), nullable=False)
-    bic = db.Column(db.String(11), nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey('company_info.id'), nullable=False)
+
+class Offer(db.Model):
+    __tablename__ = 'offers'
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    validity_days = db.Column(db.Integer, nullable=False, default=30)
+    status = db.Column(db.String(50), nullable=False, default="draft")
+    total_price = db.Column(db.Float, nullable=True)
+
+    client = db.relationship("Client", backref="offers")
+    products = db.relationship("OfferProduct", back_populates="offer")
+    services = db.relationship("OfferService", back_populates="offer")
+    def formatted_id(self):
+        return str(self.id).zfill(5)
+class OfferProduct(db.Model):
+    __tablename__ = 'offer_products'
+    id = db.Column(db.Integer, primary_key=True)
+    offer_id = db.Column(db.Integer, db.ForeignKey('offers.id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+
+    offer = db.relationship("Offer", back_populates="products")
+    product = db.relationship("Product")
+
+class OfferService(db.Model):
+    __tablename__ = 'offer_services'
+    id = db.Column(db.Integer, primary_key=True)
+    offer_id = db.Column(db.Integer, db.ForeignKey('offers.id'), nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+
+    offer = db.relationship("Offer", back_populates="services")
+    service = db.relationship("Service")

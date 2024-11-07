@@ -51,7 +51,7 @@
                         <a href="{{ url_for('visits.edit_visit', visit_id=visit.id) }}" class="btn btn-warning btn-sm" title="Редактирай">
                             <i class="fas fa-edit"></i>
                         </a>
-                        {% if current_user.role == 'user' %}
+                        {% if current_user.role == 'admin' %}
                         <a href="#" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal{{ visit.id }}" title="Изтрий">
                             <i class="fas fa-trash-alt"></i>
                         </a>

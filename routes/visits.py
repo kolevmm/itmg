@@ -1,6 +1,7 @@
 # routes/visits.py
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
+from sqlalchemy.orm import selectinload
 from flask_login import login_required
 from models import Visit, Client, Service, Employee, db
 from datetime import datetime
@@ -40,22 +41,23 @@ def add_visit():
 @visits_bp.route('/list')
 @login_required
 def list_visits():
-    visits = Visit.query.all()
+      # Използване на selectinload за предварително зареждане на свързаните обекти (client и service)
+    visits = db.session.query(Visit).options(
+        selectinload(Visit.client),
+        selectinload(Visit.service),
+        selectinload(Visit.employee)
+    ).all()
     
     # Инициализация на общата сума
     total_amount = 0
     for visit in visits:
-        # Отпечатване на информацията за всяко посещение
-        print(f"Visit ID: {visit.id}, Client ID: {visit.client_id}, Service ID: {visit.service_id}, Duration: {visit.duration}, Service Price: {visit.service.price}")
+        
 
         # Изчисляване на таксата и актуализиране на total_amount
         if visit.service.price is not None and visit.duration is not None:
             visit_total = visit.duration * visit.service.price
             total_amount += visit_total  # Събиране на таксите
-            print(f"Visit Total: {visit_total}")  # Печата на индивидуалната такса
-
-    # Отпечатка на общата сума
-    print(f"Total Amount: {total_amount}")
+ 
 
     return render_template('list_visits.html', visits=visits, total_amount=total_amount)
 

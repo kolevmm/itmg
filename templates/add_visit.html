@@ -51,7 +51,7 @@
                 employeeSelect.innerHTML = '<option value="">Изберете служител</option>';
                 
                 // AJAX заявка, за да получите служители, свързани с клиента
-                fetch(`/get_employees/${clientId}`)
+                fetch(`/employess/get/${clientId}`)
                     .then(response => response.json())
                     .then(data => {
                         data.forEach(employee => {

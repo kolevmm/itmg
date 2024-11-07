@@ -10,9 +10,12 @@ clients_bp = Blueprint('clients', __name__, url_prefix='/clients')
 def add_client():
     if request.method == 'POST':
         name = request.form['name']
+        vat = request.form['vat']
+        address = request.form['address']
+        mol = request.form['mol']
         email = request.form['email']
         phone = request.form['phone']
-        new_client = Client(name=name, email=email, phone=phone)
+        new_client = Client(name=name, vat=vat, address=address, mol=mol, email=email, phone=phone)
         db.session.add(new_client)
         db.session.commit()
         flash('Клиентът беше добавен успешно!', 'success')
@@ -32,6 +35,9 @@ def edit_client(client_id):
 
     if request.method == 'POST':
         client.name = request.form['name']
+        client.vat = request.form['vat']
+        client.address = request.form['address']
+        client.mol = request.form['mol']
         client.email = request.form['email']
         client.phone = request.form['phone']
         

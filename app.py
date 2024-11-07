@@ -1,7 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, current_user, login_required
 from dotenv import load_dotenv
-from models import db, User  # Уверете се, че сте импортирали User тук
+from models import db, User, Client, Employee, Service, Product, Visit, Settings, CompanyInfo, BankAccount, Offer, OfferProduct, OfferService
+from flask_migrate import Migrate
+
 import os
 
 load_dotenv()
@@ -11,6 +13,8 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///services.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
 
 # Инициализация на базата данни
 db.init_app(app)
@@ -33,15 +37,22 @@ from routes.employees import employees_bp
 from routes.reports import reports_bp
 from routes.auth import auth_bp
 from routes.products import products_bp
+from routes.settings import settings_bp
+from routes.offers import offers_bp
+
 
 app.register_blueprint(clients_bp)
 app.register_blueprint(services_bp)
 app.register_blueprint(visits_bp)
 app.register_blueprint(users_bp)
-app.register_blueprint(employees_bp)
+app.register_blueprint(employees_bp, url_prefix='/employess')
 app.register_blueprint(reports_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(products_bp)
+app.register_blueprint(settings_bp)
+app.register_blueprint(offers_bp)
+
+migrate = Migrate(app, db)  # Добавяне на Flask-Migrate
 
 @app.before_first_request
 def create_tables():

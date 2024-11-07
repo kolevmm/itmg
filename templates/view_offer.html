@@ -1,0 +1,36 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+
+<!-- Включване на навигационния бар -->
+{% include 'navbar.html' %}
+
+<main class="container my-5">
+    <h2 class="text-center">Детайли на оферта #{{ offer.formatted_id() }}</h2>
+
+    <div class="mb-3">
+        <h4>Клиент: {{ offer.client.name }}</h4>
+        <p><strong>Дата на създаване:</strong> {{ offer.created_at.strftime('%Y-%m-%d') }}</p>
+        <p><strong>Валидност (в дни):</strong> {{ offer.validity_days }}</p>
+        <p><strong>Статус:</strong> {{ offer.status }}</p>
+        <p><strong>Обща сума:</strong> {{ offer.total_price }} BGN</p>
+    </div>
+
+    <h4>Продукти</h4>
+    <ul>
+        {% for product in offer.products %}
+        <li>{{ product.product.name }} - {{ product.quantity }} бр. на {{ product.product.price }} BGN</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Услуги</h4>
+    <ul>
+        {% for service in offer.services %}
+        <li>{{ service.service.name }} - {{ service.quantity }} часа на {{ service.service.price }} BGN</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('offers.list_offers') }}" class="btn btn-secondary mt-3">Назад към списъка с оферти</a>
+</main>
+
+<!-- Включване на footer -->
+{% include 'footer.html' %}
