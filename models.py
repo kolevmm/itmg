@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -111,6 +112,7 @@ class Offer(db.Model):
     client = db.relationship("Client", backref="offers")
     products = db.relationship("OfferProduct", back_populates="offer")
     services = db.relationship("OfferService", back_populates="offer")
+
     def formatted_id(self):
         return str(self.id).zfill(5)
 class OfferProduct(db.Model):
@@ -132,3 +134,53 @@ class OfferService(db.Model):
 
     offer = db.relationship("Offer", back_populates="services")
     service = db.relationship("Service")
+
+class AssetType(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)  # Име на вида (напр. Лаптоп, Принтер)
+    monthly_maintenance_price = db.Column(db.Float, nullable=False)
+
+class Assets(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)  # Клиент, към когото е свързан активът
+    employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'), nullable=True)  # Назначен служител
+    type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'), nullable=False)  # Вид на актива (напр. Лаптоп)
+    
+    name = db.Column(db.String(100), nullable=False)  # Име на актива
+    net_name = db.Column(db.String(50), nullable=True) # Име на актива в мрежата
+    serial_number = db.Column(db.String(50), nullable=True)  # Сериен номер
+    purchase_date = db.Column(db.Date, nullable=True)  # Дата на закупуване
+    warranty_expiration = db.Column(db.Date, nullable=True)  # Изтичане на гаранцията
+    notes = db.Column(db.String(255), nullable=True)  # Бележки
+    
+    client = db.relationship('Client', backref='assets')
+    employee = db.relationship('Employee', backref='assigned_assets')  # Връзка със служителя
+    type = db.relationship('AssetType', backref='assets')  # Връзка с вида на актива
+
+class MaintenanceOffer(db.Model):
+    __tablename__ = 'maintenance_offers'
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    validity_days = db.Column(db.Integer, nullable=False, default=30)
+    status = db.Column(db.String(50), nullable=False, default="draft")
+    total_price = db.Column(db.Float, nullable=True)
+
+    client = db.relationship("Client", backref="maintenance_offers")
+    assets = db.relationship("MaintenanceOfferAsset", back_populates="maintenance_offer")
+    def formatted_id(self):
+        return str(self.id).zfill(5)
+
+class MaintenanceOfferAsset(db.Model):
+    __tablename__ = 'maintenance_offer_assets'
+    id = db.Column(db.Integer, primary_key=True)
+    maintenance_offer_id = db.Column(db.Integer, db.ForeignKey('maintenance_offers.id'), nullable=False)
+    asset_type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+
+    maintenance_offer = db.relationship("MaintenanceOffer", back_populates="assets")
+    asset_type = db.relationship("AssetType")
+
+    def calculate_total_price(self):
+        # This calculates the maintenance cost for this asset type in the offer
+        return self.quantity * self.asset_type.monthly_maintenance_price

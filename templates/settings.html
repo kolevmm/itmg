@@ -5,6 +5,105 @@
 {% include 'navbar.html' %}
 <main class="container my-5">
     <h2 class="text-center">Настройки</h2>
+    <div class="row">
+        <!-- Ляво меню за настройки с дропдаун -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5>Настройки</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <!-- Основни настройки -->
+                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('company')">Фирмени данни</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('accounts')">Банкови сметки</a>
+                    
+                    <!-- Дропдаун меню за активи -->
+                    <div class="list-group-item p-0">
+                        <div class="dropdown">
+                            <a href="#" class="list-group-item list-group-item-action dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                Активи
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#" onclick="loadContent('asset_type')">Тип</a>
+                                <!-- Можеш да добавиш и други параметри за активите тук -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Дясна колона за съдържание -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5>Настройки за: <span id="settings-title">Фирмени данни</span></h5>
+                </div>
+                <div class="card-body" id="settings-content">
+                    <!-- Тук ще се зарежда динамичното съдържание -->
+                    <p>Моля, изберете категория от менюто вляво.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function loadContent(setting) {
+        document.getElementById("settings-title").textContent = 
+            setting === 'company' ? "Фирмени данни" :
+            setting === 'accounts' ? "Банкови сметки" :
+            setting === 'asset_type' ? "Тип на актива" : "";
+    
+        // Примерен код за зареждане на различно съдържание
+        if (setting === 'company') {
+            document.getElementById("settings-content").innerHTML = `
+                    <div class="form-group">
+                        <label for="company_name">Име на фирмата:</label>
+                        <input type="text" id="company_name" name="company_name" class="form-control" value="{{ company_info.company_name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tax_number">Данъчен номер:</label>
+                        <input type="text" id="tax_number" name="tax_number" class="form-control" value="{{ company_info.tax_number }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Адрес:</label>
+                        <input type="text" id="address" name="address" class="form-control" value="{{ company_info.address }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Телефон:</label>
+                        <input type="text" id="phone" name="phone" class="form-control" value="{{ company_info.phone }}" required>
+                    </div>
+                <!-- Записване на промените за основните настройки -->
+                <button type="submit" class="btn btn-success mt-4">Запази настройките</button>
+            `;
+        } else if (setting === 'accounts') {
+            document.getElementById("settings-content").innerHTML = `
+                <form>
+                    <div class="form-group">
+                        <label for="account_number">Номер на сметка</label>
+                        <input type="text" id="account_number" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Запази</button>
+                </form>
+            `;
+        } else if (setting === 'asset_type') {
+            document.getElementById("settings-content").innerHTML = `
+                <form>
+                    <div class="form-group">
+                        <label for="asset_type">Тип актив</label>
+                        <input type="text" id="asset_type" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Добави</button>
+                </form>
+            `;
+        }
+    }
+</script>
+
+
+
+
+
+
 
     <!-- Основна форма за настройки -->
     <form action="{{ url_for('settings.manage_settings') }}" method="POST" class="bg-light p-4 border rounded">

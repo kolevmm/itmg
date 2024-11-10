@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
-from models import Client, db, Visit  # Импортиране на нужните модели и база данни
+from models import Client, Assets, db, Visit  # Импортиране на нужните модели и база данни
 from decorators import roles_required  # Импортирай декоратора, ако е в отделен файл
 
 clients_bp = Blueprint('clients', __name__, url_prefix='/clients')
@@ -66,5 +66,5 @@ def client_history(client_id):
     
     # Зареждане на всички посещения, свързани с този клиент
     visits = Visit.query.filter_by(client_id=client_id).order_by(Visit.visit_date.desc()).all()
-    
-    return render_template('client_history.html', client=client, visits=visits)
+    assets = Assets.query.filter_by(client_id=client_id).all()
+    return render_template('client_history.html', client=client, visits=visits, assets=assets)

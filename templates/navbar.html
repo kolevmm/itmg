@@ -54,7 +54,8 @@
                         Оферти
                     </a>
                     <div class="dropdown-menu" aria-labelledby="productsDropdown">
-                        <a class="dropdown-item" href="{{ url_for('offers.add_offer') }}"><i class="fas fa-plus"></i> Добавяне на офета</a>
+                        <a class="dropdown-item" href="{{ url_for('offers.add_offer') }}"><i class="fas fa-plus"></i> Оферта за услуги</a>
+                        <a class="dropdown-item" href="{{ url_for('maintenance_offers.add_maintenance_offer') }}"><i class="fas fa-plus"></i> Оферта за поддръжка</a>
                         <a class="dropdown-item" href="{{ url_for('offers.list_offers') }}"><i class="fas fa-list"></i> Списък с оферти</a>
                     </div>
                 </li>
@@ -66,6 +67,7 @@
                         <a class="dropdown-item" href="{{ url_for('users.create_user') }}"><i class="fas fa-user-cog"></i> Добави потребител</a>
                         <a class="dropdown-item" href="{{ url_for('reports.generate_report') }}"><i class="fas fa-file-pdf"></i> Генериране на отчети</a>
                         <a class="dropdown-item" href="{{ url_for('settings.manage_settings') }}"><i class="fas fa-user-cog"></i> Настройки</a>
+                        <a class="dropdown-item" href="{{ url_for('assets.add_asset') }}"><i class="fas fa-user-cog"></i> Добави актив</a>
                     </div>
                 </li>
             </ul>

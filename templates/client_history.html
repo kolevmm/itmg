@@ -1,25 +1,66 @@
 <!-- Включване на header -->
 {% include 'header.html' %}
-<header class="bg-info text-white text-center py-4">
-    <h1>История на обслужването: {{ client.name }}</h1>
-</header>
+
 <!-- Включване на навигационния бар -->
 {% include 'navbar.html' %}
 
 <main class="container my-5">
+    <div class="row">
+        <!-- Карта 1: Детайли за клиента -->
+        <div class="col-md-4">
     <!-- Детайли за клиента -->
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4>Детайли за клиента</h4>
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header">
+                    <h4>Детайли за клиента</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Име:</strong> {{ client.name }}</p>
+                    <p class="card-text"><strong>Булстат:</strong> {{ client.vat }}</p>
+                    <p class="card-text"><strong>Адрес:</strong> {{ client.address }}</p>
+                    <p class="card-text"><strong>МОЛ:</strong> {{ client.mol }}</p>
+                    <p class="card-text"><strong>Имейл:</strong> {{ client.email }}</p>
+                    <p class="card-text"><strong>Телефон:</strong> {{ client.phone }}</p>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <p><strong>Име:</strong> {{ client.name }}</p>
-            <p><strong>Имейл:</strong> {{ client.email }}</p>
-            <p><strong>Телефон:</strong> {{ client.phone }}</p>
-            <p><strong>Адрес:</strong> {{ client.address }}</p>
+        <div class="col-md-8">
+            <!-- Детайли за клиента -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header">
+                            <h4>Активи на клиента</h4>
+                        </div>
+                        <div class="card-body">
+                            {% if assets %}
+                    <table class="table table-striped">
+                    <thead class="table-info">
+                        <tr>
+                            <th>Име</th>
+                            <th>Тип</th>
+                            <th>Служител</th>
+                            <th>Дата на купуване</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in assets %}
+                        <tr>
+                            <td>{{ asset.net_name }}</td>
+                            <td>{{ asset.type.name }}</td>
+                            <td>{{ asset.employee.name if asset.employee else 'Не е назначен' }}</td>
+                            <td>{{ asset.purchase_date.strftime('%m-%d-%Y') if asset.purchase_date else 'Няма' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-warning text-center" role="alert">
+                    Няма записани активи за този клиент.
+                </div>
+            {% endif %}
+                        </div>
+                    </div>
         </div>
-    </div>
-
+    </div>        
+    
     <!-- История на посещенията -->
     <h3 class="text-center mb-4">История на посещенията</h3>
     

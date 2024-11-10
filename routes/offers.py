@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from models import db, Offer, OfferProduct, OfferService, Client, Product, Service
+from models import db, Offer, OfferProduct, OfferService, Client, Product, Service, MaintenanceOffer
 from flask_login import login_required
 
 offers_bp = Blueprint('offers', __name__, url_prefix='/offers')
@@ -63,9 +63,10 @@ def add_offer():
 def list_offers():
     # Извличане на всички оферти от базата данни
     offers = Offer.query.all()
+    maintenance_offers = MaintenanceOffer.query.all()
     
     # Рендиране на шаблона и предаване на офертите към него
-    return render_template('list_offers.html', offers=offers)
+    return render_template('list_offers.html', offers=offers,  maintenance_offers=maintenance_offers)
 
 @offers_bp.route('/view/<int:offer_id>', methods=['GET'])
 @login_required
@@ -73,16 +74,13 @@ def view_offer(offer_id):
     offer = Offer.query.get_or_404(offer_id)
     return render_template('view_offer.html', offer=offer)
 
-@offers_bp.route('/delete/<int:offer_id>', methods=['GET', 'POST'])
+@offers_bp.route('/delete/<int:offer_id>', methods=['POST'])
 @login_required
 def delete_offer(offer_id):
     offer = Offer.query.get_or_404(offer_id)
 
     try:
-        # Изтрий свързаните записи в offer_services
-        OfferService.query.filter_by(offer_id=offer.id).delete()
-
-        # Изтрий свързаните записи в offer_products, ако също съществуват
+        # Изтрий свързаните записи в offer_products, без да изтриваш самите продукти
         OfferProduct.query.filter_by(offer_id=offer.id).delete()
 
         # Изтрий самата оферта
@@ -92,10 +90,9 @@ def delete_offer(offer_id):
         flash('Офертата беше успешно изтрита!', 'success')
 
     except Exception as e:
-        db.session.rollback()  # Връщане назад на транзакцията при грешка
+        db.session.rollback()  # Върни назад транзакцията при грешка
         flash(f'Грешка при изтриването на офертата: {str(e)}', 'danger')
 
     return redirect(url_for('offers.list_offers'))
-
 
 

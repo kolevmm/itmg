@@ -1,0 +1,119 @@
+<!-- Include header and navbar -->
+{% include 'header.html' %}
+{% include 'navbar.html' %}
+
+<main class="container my-5">
+    <h2 class="text-center">Добавяне на нова оферта за поддръжка</h2>
+
+    <form action="{{ url_for('maintenance_offers.add_maintenance_offer') }}" method="POST" class="bg-light p-4 border rounded">
+        <!-- Select Client -->
+        <div class="form-group">
+            <label for="client_id">Клиент:</label>
+            <select id="client_id" name="client_id" class="form-control" required>
+                {% for client in clients %}
+                <option value="{{ client.id }}">{{ client.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Status of the Offer -->
+        <div class="form-group">
+            <label for="status">Статус:</label>
+            <select id="status" name="status" class="form-control" required>
+                <option value="Чернова">Чернова</option>
+                <option value="Изпратена">Изпратена</option>
+                <option value="Приета">Приета</option>
+                <option value="Отхвърлена">Отхвърлена</option>
+            </select>
+        </div>
+
+        <!-- Asset Section -->
+        <h4 class="mt-4">Активи за поддръжка</h4>
+
+<!-- Заглавия на колоните за Тип актив, Количество, Цена за поддръжка -->
+<div class="form-row">
+    <div class="col-md-5"><label>Тип актив</label></div>
+    <div class="col-md-3"><label>Количество</label></div>
+    <div class="col-md-3"><label>Цена за поддръжка</label></div>
+    <div class="col-md-1"></div> <!-- Празна колона за бутона за изтриване -->
+</div>
+
+<div id="asset-section">
+    <div class="asset-entry mb-3">
+        <div class="form-row align-items-end">
+            <div class="col-md-5">
+                <select name="assets[]" class="form-control asset-select" onchange="calculateTotal()">
+                    <option value="" data-price="0">Изберете тип актив</option>
+                    {% for asset_type in asset_types %}
+                    <option value="{{ asset_type.id }}" data-price="{{ asset_type.monthly_maintenance_price }}">
+                        {{ asset_type.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="asset_quantities[]" class="form-control asset-quantity" min="1" value="1" onchange="calculateTotal()">
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="asset_prices[]" class="form-control asset-price" step="0.01" placeholder="Цена за поддръжка" readonly>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-link text-danger" onclick="removeAssetEntry(this)">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- Add More Assets Button -->
+            <button type="button" class="btn btn-secondary mt-2" onclick="addAssetEntry()">Добави още</button>
+        </div>
+
+        <!-- Total Maintenance Price -->
+        <h4 class="mt-4">Общо за поддръжка: <span id="total-price">0</span> BGN/месец</h4>
+
+        <!-- Submit and Cancel Buttons -->
+        <button type="submit" class="btn btn-primary mt-4">Запази офертата за поддръжка</button>
+        <a href="{{ url_for('maintenance_offers.add_maintenance_offer') }}" class="btn btn-secondary mt-4">Отказ</a>
+    </form>
+</main>
+
+<script>
+    function calculateTotal() {
+        let total = 0;
+
+        // Calculate total for assets
+        document.querySelectorAll('.asset-entry').forEach(entry => {
+            const select = entry.querySelector('.asset-select');
+            const quantityInput = entry.querySelector('.asset-quantity');
+            const priceInput = entry.querySelector('.asset-price');
+
+            const price = parseFloat(select.options[select.selectedIndex].dataset.price || 0);
+            const quantity = parseInt(quantityInput.value) || 1;
+            const totalAssetPrice = price * quantity;
+
+            priceInput.value = totalAssetPrice.toFixed(2);
+            total += totalAssetPrice;
+        });
+
+        document.getElementById('total-price').textContent = total.toFixed(2);
+    }
+
+    function addAssetEntry() {
+        const assetSection = document.getElementById('asset-section');
+        const entry = document.querySelector('.asset-entry').cloneNode(true);
+        entry.querySelectorAll('select, input').forEach(el => el.value = '');
+        assetSection.appendChild(entry);
+    }
+    function removeAssetEntry(button) {
+    const assetSection = document.getElementById('asset-section');
+    
+    // Премахва само ако има повече от един ред
+    if (assetSection.querySelectorAll('.asset-entry').length > 1) {
+        button.closest('.asset-entry').remove();
+    }
+}
+</script>
+
+<!-- Include footer -->
+{% include 'footer.html' %}

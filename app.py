@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, current_user, login_required
 from dotenv import load_dotenv
-from models import db, User, Client, Employee, Service, Product, Visit, Settings, CompanyInfo, BankAccount, Offer, OfferProduct, OfferService
+from models import db, User, Client, Employee, Service, Product, Visit, Settings, CompanyInfo, BankAccount, Offer, OfferProduct, OfferService, MaintenanceOffer, MaintenanceOfferAsset
 from flask_migrate import Migrate
 
 import os
@@ -39,6 +39,8 @@ from routes.auth import auth_bp
 from routes.products import products_bp
 from routes.settings import settings_bp
 from routes.offers import offers_bp
+from routes.assets import assets_bp
+from routes.maintenance_offers import maintenance_offers_bp
 
 
 app.register_blueprint(clients_bp)
@@ -51,12 +53,15 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(products_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(offers_bp)
+app.register_blueprint(assets_bp)
+app.register_blueprint(maintenance_offers_bp)
+
 
 migrate = Migrate(app, db)  # Добавяне на Flask-Migrate
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+ #   db.create_all()
 
 # Главна страница
 @app.route('/')
