@@ -21,6 +21,9 @@
         {% for asset in offer.assets %}
         <li>{{ asset.asset_type.name }} - {{ asset.quantity }} бр. на {{ asset.asset_type.monthly_maintenance_price }} BGN</li>
         {% endfor %}
+        {% for field in offer.custom_fields %}
+        <li>{{ field.name }} - {{ field.quantity }} - {{ field.price | round(2) }} </li>
+        {% endfor %}
     </ul>
 </div>
     <a href="{{ url_for('offers.list_offers') }}" class="btn btn-secondary mt-3">Назад към списъка с оферти за поддръжка</a>

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_login import LoginManager, current_user, login_required
 from dotenv import load_dotenv
-from models import db, User, Client, Employee, Service, Product, Visit, Settings, CompanyInfo, BankAccount, Offer, OfferProduct, OfferService, MaintenanceOffer, MaintenanceOfferAsset
+from models import db, User, Client, Employee, Service, ServiceCategory, Product, Visit, Settings, CompanyInfo, BankAccount, Offer, OfferProduct, OfferService, MaintenanceOffer, MaintenanceOfferAsset
 from flask_migrate import Migrate
 
 import os

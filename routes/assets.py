@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required
-from models import Client, Employee, Assets, AssetType, db  # Импортиране на нужните модели и база данни
+from models import Client, Employee, Assets, AssetType, Service, db  # Импортиране на нужните модели и база данни
 from decorators import roles_required  # Импортирай декоратора, ако е в отделен файл
 from datetime import datetime
 
@@ -40,3 +40,36 @@ def add_asset():
 def get_employees(client_id):
     employees = Employee.query.filter_by(client_id=client_id).all()
     return jsonify([{'id': employee.id, 'name': employee.name} for employee in employees])
+
+@assets_bp.route('/add_type', methods=['GET', 'POST'])
+def add_asset_type():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        description = request.form.get('description')
+        monthly_price = float(request.form.get('monthly_price', 0))
+        selected_services = request.form.getlist('services')
+ # Проверка дали съществува такъв тип актив
+        existing_asset_type = AssetType.query.filter_by(name=name).first()
+        if existing_asset_type:
+            flash('Тип актив с това име вече съществува!', 'danger')
+            return redirect(url_for('assets.add_asset_type'))
+
+        # Създаване на нов тип актив
+        new_asset_type = AssetType(name=name, description=description, monthly_maintenance_price=monthly_price)
+
+        # Добавяне на избраните услуги
+        if selected_services:
+            for service_id in selected_services:
+                service = Service.query.get(int(service_id))
+                if service:
+                    new_asset_type.services.append(service)
+
+        db.session.add(new_asset_type)
+        db.session.commit()
+
+        flash('Типът актив е успешно добавен!', 'success')
+        return redirect(url_for('assets.add_asset_type'))
+
+    # Зареждане на всички услуги за избор
+    services = Service.query.all()
+    return render_template('add_asset_type.html', services=services)

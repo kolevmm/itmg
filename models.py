@@ -24,6 +24,16 @@ class Service(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=True)
     price = db.Column(db.Float, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('service_categories.id', name='fk_service_category'), nullable=False)
+    category = db.relationship('ServiceCategory', back_populates='services')
+
+ServiceCategory = db.relationship('Service', back_populates='category')
+
+# Мождел за категории на услуги
+class ServiceCategory(db.Model):
+    __tablename__ = 'service_categories'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
 
 # Модел за клиенти
 class Client(db.Model):
@@ -138,8 +148,15 @@ class OfferService(db.Model):
 class AssetType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True, nullable=False)  # Име на вида (напр. Лаптоп, Принтер)
+    description = db.Column(db.Text, nullable=True)
     monthly_maintenance_price = db.Column(db.Float, nullable=False)
+    services = db.relationship('Service', secondary='asset_type_services', backref='asset_types')
 
+    asset_type_services = db.Table(
+    'asset_type_services',
+    db.Column('asset_type_id', db.Integer, db.ForeignKey('asset_type.id'), primary_key=True),
+    db.Column('service_id', db.Integer, db.ForeignKey('service.id'), primary_key=True)
+)
 class Assets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), nullable=False)  # Клиент, към когото е свързан активът
@@ -168,6 +185,7 @@ class MaintenanceOffer(db.Model):
 
     client = db.relationship("Client", backref="maintenance_offers")
     assets = db.relationship("MaintenanceOfferAsset", back_populates="maintenance_offer")
+    custom_fields = db.relationship("MaintenanceOfferCustomField", back_populates="maintenance_offer")
     def formatted_id(self):
         return str(self.id).zfill(5)
 
@@ -177,10 +195,24 @@ class MaintenanceOfferAsset(db.Model):
     maintenance_offer_id = db.Column(db.Integer, db.ForeignKey('maintenance_offers.id'), nullable=False)
     asset_type_id = db.Column(db.Integer, db.ForeignKey('asset_type.id'), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=True)
+  # Свързана услуга
 
     maintenance_offer = db.relationship("MaintenanceOffer", back_populates="assets")
     asset_type = db.relationship("AssetType")
+    service = db.relationship("Service")  # Връзка с услугата
 
     def calculate_total_price(self):
         # This calculates the maintenance cost for this asset type in the offer
         return self.quantity * self.asset_type.monthly_maintenance_price
+
+class MaintenanceOfferCustomField(db.Model):
+    __tablename__ = 'maintenance_offer_custom_fields'
+    id = db.Column(db.Integer, primary_key=True)
+    maintenance_offer_id = db.Column(db.Integer, db.ForeignKey('maintenance_offers.id'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    price = db.Column(db.Float, nullable=False, default=0.0)
+    total = db.Column(db.Float, nullable=False, default=0.0)
+
+    maintenance_offer = db.relationship("MaintenanceOffer", back_populates="custom_fields")

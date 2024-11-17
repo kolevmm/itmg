@@ -1,0 +1,38 @@
+<!-- Include header and navbar -->
+{% include 'header.html' %}
+{% include 'navbar.html' %}
+
+<main class="container my-5">
+    <h2 class="text-center">Добавяне на нов тип актив</h2>
+    <form action="{{ url_for('assets.add_asset_type') }}" method="POST" class="bg-light p-4 border rounded">
+        <div class="form-group">
+            <label for="name">Име на актива:</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Описание:</label>
+            <textarea id="description" name="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="monthly_price">Месечна цена за поддръжка (BGN):</label>
+            <input type="number" id="monthly_price" name="monthly_price" class="form-control" step="0.01" required>
+        </div>
+        <div class="form-group">
+            <label>Услуги:</label>
+            <div class="form-check">
+                {% for service in services %}
+                <input class="form-check-input" type="checkbox" id="service-{{ service.id }}" name="services" value="{{ service.id }}">
+                <label class="form-check-label" for="service-{{ service.id }}">
+                    {{ service.name }} - {{ service.price }} BGN
+                </label>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Запази</button>
+        <a href="{{ url_for('assets.add_asset_type') }}" class="btn btn-secondary">Назад</a>
+    </form>
+</main>
+
+<!-- Include footer -->
+{% include 'footer.html' %}

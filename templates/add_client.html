@@ -4,6 +4,7 @@
      <!-- Включване на навигационния бар -->
      {% include 'navbar.html' %}
     <main class="container my-5">
+        <div class="col-md-8 offset-md-2">  <!-- Центриране на формата -->
         <form action="{{ url_for('clients.add_client') }}" method="POST" class="bg-light p-4 border rounded">
             <div class="form-group">
                 <label for="name">Име на клиента:</label>
@@ -31,6 +32,7 @@
             </div>
             <button type="submit" class="btn btn-warning btn-block">Добави клиент</button>
         </form>
+        </div>
     </main>
 <!-- Включване на footer -->
 {% include 'footer.html' %}

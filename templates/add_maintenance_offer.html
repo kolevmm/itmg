@@ -30,44 +30,91 @@
         <!-- Asset Section -->
         <h4 class="mt-4">Активи за поддръжка</h4>
 
-<!-- Заглавия на колоните за Тип актив, Количество, Цена за поддръжка -->
-<div class="form-row">
-    <div class="col-md-5"><label>Тип актив</label></div>
-    <div class="col-md-3"><label>Количество</label></div>
-    <div class="col-md-3"><label>Цена за поддръжка</label></div>
-    <div class="col-md-1"></div> <!-- Празна колона за бутона за изтриване -->
-</div>
+        <div class="form-row">
+            <div class="col-md-3"><label>Тип актив</label></div>
+            <div class="col-md-1"><label>Кол.</label></div>
+            <div class="col-md-2"><label>Цена</label></div>
+            <div class="col-md-3"><label>Услуги</label></div>
+            <div class="col-md-2"><label>Обща сума</label></div>
+        </div>
 
-<div id="asset-section">
-    <div class="asset-entry mb-3">
-        <div class="form-row align-items-end">
-            <div class="col-md-5">
-                <select name="assets[]" class="form-control asset-select" onchange="calculateTotal()">
-                    <option value="" data-price="0">Изберете тип актив</option>
-                    {% for asset_type in asset_types %}
-                    <option value="{{ asset_type.id }}" data-price="{{ asset_type.monthly_maintenance_price }}">
-                        {{ asset_type.name }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="number" name="asset_quantities[]" class="form-control asset-quantity" min="1" value="1" onchange="calculateTotal()">
-            </div>
-            <div class="col-md-3">
-                <input type="number" name="asset_prices[]" class="form-control asset-price" step="0.01" placeholder="Цена за поддръжка" readonly>
-            </div>
-            <div class="col-md-1">
-                <button type="button" class="btn btn-link text-danger" onclick="removeAssetEntry(this)">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+        <div id="asset-section">
+            <div class="asset-entry mb-3">
+                <div class="form-row align-items-end">
+                    <div class="col-md-3">
+                        <select name="assets[]" class="form-control asset-select" onchange="updatePriceAndServices(this)">
+                            <option value="" data-price="0" data-services="[]">Изберете тип актив</option>
+                            {% for asset_type in asset_types %}
+                            <option value="{{ asset_type.id }}" data-price="{{ asset_type.monthly_maintenance_price }}" data-services='{{ asset_type.services | tojson }}'>
+                                {{ asset_type.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <input type="number" name="asset_quantities[]" class="form-control asset-quantity" min="1" value="1" onchange="calculateAssetTotal(this)" >
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="asset_prices[]" class="form-control asset-price" step="0.01" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <select name="asset_services[]" class="form-control asset-service-select">
+                            <option value="">Изберете услуга</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" class="form-control asset-total" readonly>
+                    </div>
+                    <div class="col-md-1 text-left">
+                        <button type="button" class="btn btn-link text-danger" onclick="removeAssetEntry(this)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-            <!-- Add More Assets Button -->
-            <button type="button" class="btn btn-secondary mt-2" onclick="addAssetEntry()">Добави още</button>
+        
+
+        <!-- Add More Assets Button -->
+        <button type="button" class="btn btn-secondary mt-2" onclick="addAssetEntry()">Добави още</button>
+
+        <!-- Custom Fields Section -->
+        <h4 class="mt-4">Допълнителни услуги</h4>
+        <div class="form-row">
+            <div class="col-md-4"><label>Име</label></div>
+            <div class="col-md-2"><label>Брой</label></div>
+            <div class="col-md-2"><label>Цена</label></div>
+            <div class="col-md-2"><label>Общо</label></div>
+            <div class="col-md-2"></div> <!-- Празна колона за бутона за изтриване -->
         </div>
+        
+        <div id="custom-fields-section">
+            <div class="custom-field-entry mb-3">
+                <div class="form-row align-items-end">
+                    <div class="col-md-4">
+                        <input type="text" name="custom_names[]" class="form-control" placeholder="Въведете име">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="custom_quantities[]" class="form-control" min="1" value="1" onchange="calculateCustomTotal(this)">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="custom_prices[]" class="form-control" step="0.01" placeholder="Цена" onchange="calculateCustomTotal(this)">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" name="custom_totals[]" class="form-control custom-total" readonly>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <button type="button" class="btn btn-link text-danger" onclick="removeCustomField(this)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Бутон за добавяне на нови полета -->
+        <button type="button" class="btn btn-secondary mt-2" onclick="addCustomField()">Добави още</button>
+        
 
         <!-- Total Maintenance Price -->
         <h4 class="mt-4">Общо за поддръжка: <span id="total-price">0</span> BGN/месец</h4>
@@ -77,43 +124,108 @@
         <a href="{{ url_for('maintenance_offers.add_maintenance_offer') }}" class="btn btn-secondary mt-4">Отказ</a>
     </form>
 </main>
-
 <script>
-    function calculateTotal() {
-        let total = 0;
-
-        // Calculate total for assets
-        document.querySelectorAll('.asset-entry').forEach(entry => {
-            const select = entry.querySelector('.asset-select');
-            const quantityInput = entry.querySelector('.asset-quantity');
-            const priceInput = entry.querySelector('.asset-price');
-
-            const price = parseFloat(select.options[select.selectedIndex].dataset.price || 0);
-            const quantity = parseInt(quantityInput.value) || 1;
-            const totalAssetPrice = price * quantity;
-
-            priceInput.value = totalAssetPrice.toFixed(2);
-            total += totalAssetPrice;
-        });
-
-        document.getElementById('total-price').textContent = total.toFixed(2);
-    }
-
-    function addAssetEntry() {
-        const assetSection = document.getElementById('asset-section');
-        const entry = document.querySelector('.asset-entry').cloneNode(true);
-        entry.querySelectorAll('select, input').forEach(el => el.value = '');
-        assetSection.appendChild(entry);
-    }
-    function removeAssetEntry(button) {
+   function addAssetEntry() {
     const assetSection = document.getElementById('asset-section');
-    
-    // Премахва само ако има повече от един ред
+    const entry = document.querySelector('.asset-entry').cloneNode(true);
+
+    // Изчистване на стойностите в новия ред
+    entry.querySelectorAll('select, input').forEach(el => {
+        el.value = '';
+        if (el.classList.contains('asset-total')) el.value = '0.00';
+    });
+
+    assetSection.appendChild(entry);
+}
+
+function removeAssetEntry(button) {
+    const assetSection = document.getElementById('asset-section');
+
+    // Премахва реда само ако има повече от един ред
     if (assetSection.querySelectorAll('.asset-entry').length > 1) {
         button.closest('.asset-entry').remove();
+        calculateTotal(); // Актуализиране на общата сума след премахване
+    }
+}
+
+function calculateCustomTotal(input) {
+    const row = input.closest('.custom-field-entry');
+    const quantity = parseFloat(row.querySelector('input[name="custom_quantities[]"]').value || 0);
+    const price = parseFloat(row.querySelector('input[name="custom_prices[]"]').value || 0);
+    const totalField = row.querySelector('input[name="custom_totals[]"]');
+
+    // Пресмятане на общата сума за къстъм полето
+    totalField.value = (quantity * price).toFixed(2);
+    calculateTotal(); // Актуализиране на общата сума
+}
+
+function calculateAssetTotal(input) {
+    const row = input.closest('.asset-entry');
+    const quantityInput = row.querySelector('.asset-quantity');
+    const priceInput = row.querySelector('.asset-price');
+    const totalField = row.querySelector('.asset-total');
+
+    const quantity = parseFloat(quantityInput.value || 0);
+    const price = parseFloat(priceInput.value || 0);
+
+    totalField.value = (quantity * price).toFixed(2); // Пресмятане на общата сума за реда
+    calculateTotal(); // Актуализиране на общата сума
+}
+
+function calculateTotal() {
+    let total = 0;
+
+    // Пресмятане на общата сума за активите
+    document.querySelectorAll('.asset-total').forEach(field => {
+        total += parseFloat(field.value || 0);
+    });
+
+    // Пресмятане на общата сума за къстъм полетата
+    document.querySelectorAll('input[name="custom_totals[]"]').forEach(field => {
+        total += parseFloat(field.value || 0);
+    });
+
+    // Актуализиране на общата сума
+    document.getElementById('total-price').textContent = total.toFixed(2);
+}
+function updatePriceAndServices(assetSelect) {
+    const row = assetSelect.closest('.asset-entry');
+    const selectedOption = assetSelect.options[assetSelect.selectedIndex];
+
+    // Актуализиране на цената
+    const priceInput = row.querySelector('.asset-price');
+    const price = parseFloat(selectedOption.dataset.price || 0);
+    priceInput.value = price.toFixed(2);
+
+    // Актуализиране на услугите
+    const serviceSelect = row.querySelector('.asset-service-select');
+    const services = JSON.parse(selectedOption.dataset.services || "[]");
+    serviceSelect.innerHTML = '<option value="">Изберете услуга</option>';
+    services.forEach(service => {
+        const option = document.createElement('option');
+        option.value = service.id;
+        option.textContent = service.name;
+        serviceSelect.appendChild(option);
+    });
+
+    calculateAssetTotal(assetSelect); // Пресмятане на сумата за реда
+}
+function addCustomField() {
+    const customFieldsSection = document.getElementById('custom-fields-section');
+    const entry = document.querySelector('.custom-field-entry').cloneNode(true);
+
+    // Изчистване на стойностите в новия ред
+    entry.querySelectorAll('input').forEach(input => input.value = '');
+    customFieldsSection.appendChild(entry);
+}
+
+function removeCustomField(button) {
+    const customFieldsSection = document.getElementById('custom-fields-section');
+    if (customFieldsSection.querySelectorAll('.custom-field-entry').length > 1) {
+        button.closest('.custom-field-entry').remove();
+        calculateTotal(); // Обновяване на общата сума
     }
 }
 </script>
-
 <!-- Include footer -->
 {% include 'footer.html' %}

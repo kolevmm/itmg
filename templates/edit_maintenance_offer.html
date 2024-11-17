@@ -1,0 +1,76 @@
+<!-- Включване на header -->
+{% include 'header.html' %}
+
+     <!-- Включване на навигационния бар -->
+     {% include 'navbar.html' %}
+     <main class="container my-5">
+        <h2 class="text-center">Редактиране на оферта за поддръжка</h2>
+    
+        <form action="{{ url_for('maintenance_offers.edit_maintenance_offer', offer_id=offer.id) }}" method="POST" class="bg-light p-4 border rounded">
+            <!-- Данни за клиента (не могат да се редактират) -->
+            <div class="form-group">
+                <label>Клиент:</label>
+                <input type="text" class="form-control" value="{{ offer.client.name }}" readonly>
+            </div>
+    
+            <!-- Статус на офертата -->
+            <div class="form-group">
+                <label for="status">Статус:</label>
+                <select id="status" name="status" class="form-control">
+                    <option value="Чернова" {% if offer.status == "Чернова" %}selected{% endif %}>Чернова</option>
+                    <option value="Изпратена" {% if offer.status == "Изпратена" %}selected{% endif %}>Изпратена</option>
+                    <option value="Приета" {% if offer.status == "Приета" %}selected{% endif %}>Приета</option>
+                    <option value="Отхвърлена" {% if offer.status == "Отхвърлена" %}selected{% endif %}>Отхвърлена</option>
+                </select>
+            </div>
+    
+            <!-- Редактиране на активи -->
+            <h4>Активи за поддръжка</h4>
+            <div id="asset-section">
+                {% for asset in assets %}
+                <div class="form-row align-items-end mb-3">
+                    <div class="col-md-5">
+                        <select name="assets[]" class="form-control asset-select">
+                            {% for asset_type in asset_types %}
+                            <option value="{{ asset_type.id }}" {% if asset.asset_type_id == asset_type.id %}selected{% endif %}>
+                                {{ asset_type.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" name="asset_quantities[]" class="form-control asset-quantity" value="{{ asset.quantity }}">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+    
+            <!-- Редактиране на къстъм полета -->
+            <h4>Къстъм полета</h4>
+            <div id="custom-fields-section">
+                {% for field in custom_fields %}
+                <div class="form-row align-items-end mb-3">
+                    <div class="col-md-4">
+                        <input type="text" name="custom_names[]" class="form-control" value="{{ field.name }}">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="custom_quantities[]" class="form-control" value="{{ field.quantity }}">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="custom_prices[]" class="form-control" value="{{ field.price }}">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+    
+            <!-- Обобщение на цените -->
+            <h4 class="mt-4">Обща сума: {{ offer.total_price }} BGN</h4>
+    
+            <!-- Запазване -->
+            <button type="submit" class="btn btn-primary mt-4">Запази промените</button>
+            <a href="{{ url_for('offers.list_offers') }}" class="btn btn-secondary mt-4">Отказ</a>
+        </form>
+    </main>
+    
+<!-- Включване на footer -->
+{% include 'footer.html' %}

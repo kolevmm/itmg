@@ -80,18 +80,21 @@
                 <td>{{ offer.client.name }}</td>
                 <td>{{ offer.created_at.strftime('%Y-%m-%d') }}</td>
                 <td>{{ offer.validity_days }}</td>
-                <td>{% if offer.status == 'accepted' %}
+                <td>{% if offer.status == 'Приета' %}
                     <span class="badge badge-success">Приета</span>
-                {% elif offer.status == 'rejected' %}
+                {% elif offer.status == 'Отхвърлена' %}
                     <span class="badge badge-danger">Отхвърлена</span>
-                {% elif offer.status == 'sent' %}
+                {% elif offer.status == 'Изпратена' %}
                     <span class="badge badge-warning">Изпратена</span>
                 {% else %}
                     <span class="badge badge-primary">Чернова</span>
                 {% endif %}</td>
                 <td class="text-center">
-                   <a href="{{ url_for('maintenance_offers.view_maintenance_offer', offer_id=offer.id) }}" class="btn btn-info btn-sm" title="Преглед">
-                        <i class="fas fa-eye"></i> 
+                    <a href="{{ url_for('maintenance_offers.edit_maintenance_offer', offer_id=offer.id) }}" class="btn btn-warning btn-sm" title="Редактирай">
+                        <i class="fas fa-edit"></i> 
+                    </a>
+                    <a href="{{ url_for('maintenance_offers.template', offer_id=offer.id) }}" class="btn btn-info btn-sm" title="Преглед">
+                        <i class="fas fa-print"></i> 
                     </a>
                 </td>
             </tr>
